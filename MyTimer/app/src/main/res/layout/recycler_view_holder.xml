@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="3"
+    android:layout_marginTop="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/arrowImageView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
+        />
+    <TextView
+        android:id="@+id/sectionViewHolderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:text="00"
+        android:textColor="#ccc"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/sectionRecordViewHolderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.25"
+        android:textColor="#ccc"
+        android:text="@string/init_time"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/totalTimeViewHolderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.25"
+        android:textColor="#ccc"
+        android:text="@string/init_time"
+        android:gravity="center"
+        />
+
+</LinearLayout>

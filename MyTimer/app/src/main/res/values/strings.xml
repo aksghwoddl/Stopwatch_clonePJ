@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyTimer</string>x
+    <string name="start">시작</string>
+    <string name="stop">중지</string>
+    <string name="reset">초기화</string>
+    <string name="record">구간 기록</string>
+    <string name="init_time">00:00:00.00</string>
+    <string name="section">구간</string>
+    <string name="section_record">구간기록</string>
+    <string name="total_time">전체 시간</string>
+</resources>
