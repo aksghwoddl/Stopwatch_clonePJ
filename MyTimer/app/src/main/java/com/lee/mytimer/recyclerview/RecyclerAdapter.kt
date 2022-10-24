@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lee.mytimer.R
+import com.lee.mytimer.databinding.RecyclerViewHolderBinding
 
 
 class RecyclerAdapter(private val context : Context) : RecyclerView.Adapter<RecyclerViewHolder>() {
@@ -36,8 +37,8 @@ class RecyclerAdapter(private val context : Context) : RecyclerView.Adapter<Recy
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
         Log.d(TAG , "onCreateViewHolder()")
-        val view = LayoutInflater.from(context).inflate(R.layout.recycler_view_holder , parent ,false)
-        return RecyclerViewHolder(view)
+        val binding = RecyclerViewHolderBinding.inflate(LayoutInflater.from(parent.context) , parent , false)
+        return RecyclerViewHolder(binding)
     }
 
     override fun getItemCount() = modelList.size
@@ -57,7 +58,7 @@ class RecyclerAdapter(private val context : Context) : RecyclerView.Adapter<Recy
         modelList.clear()
     }
 
-    /** Check rep time is man **/
+    /** Check rep time is max **/
     private fun checkRepTimeMax(repeatedTime : Int) : Boolean {
         var max = 0
         modelList.forEach {
@@ -89,32 +90,41 @@ class RecyclerAdapter(private val context : Context) : RecyclerView.Adapter<Recy
             holder.itemView.animation = AnimationUtils.loadAnimation(context , R.anim.fade_in)
             if(checkRepTimeMin(modelList[position].sectionRepeatedTime)){
                 Log.d(TAG, "setSectionTextView: repeatedTime is min!!!")
-                holder.getSectionTextView().setTextColor(Color.BLUE)
-                holder.getArrowImageView().setImageResource(R.drawable.ic_baseline_arrow_downward_24)
-                holder.getArrowImageView().animation = AnimationUtils.loadAnimation(context , R.anim.fade_out)
+                with(holder.getRecyclerViewHolderBinding()){
+                    sectionViewHolderTextView.setTextColor(Color.BLUE)
+                    arrowImageView.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
+                    arrowImageView.animation = AnimationUtils.loadAnimation(context , R.anim.fade_out)
+                }
                 minIndex = position
             } else {
                 if(checkRepTimeMax(modelList[position].sectionRepeatedTime)){
                     Log.d(TAG, "setSectionTextView: repeatedTime is max!!!")
-                    holder.getSectionTextView().setTextColor(Color.RED)
-                    holder.getArrowImageView().setImageResource(R.drawable.ic_baseline_arrow_upward_24)
-                    holder.getArrowImageView().animation = AnimationUtils.loadAnimation(context , R.anim.fade_out)
+                    with(holder.getRecyclerViewHolderBinding()){
+                        sectionViewHolderTextView.setTextColor(Color.RED)
+                        arrowImageView.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
+                        arrowImageView.animation = AnimationUtils.loadAnimation(context , R.anim.fade_out)
+                    }
                     maxIndex = position
                 }
             }
         }
 
-        // set previous sectionTextViews color
-        when(position){
-            minIndex -> holder.getSectionTextView().setTextColor(Color.BLUE)
-            maxIndex ->holder.getSectionTextView().setTextColor(Color.RED)
-            else -> holder.getSectionTextView().setTextColor(context.getColor(R.color.gray))
-        }
+        with(holder.getRecyclerViewHolderBinding()){
+            // set previous sectionTextViews color
+            when(position){
+                minIndex -> sectionViewHolderTextView.setTextColor(Color.BLUE)
+                maxIndex -> sectionViewHolderTextView.setTextColor(Color.RED)
+                else -> sectionViewHolderTextView.setTextColor(context.getColor(R.color.gray))
+            }
 
-        // remove previous items arrowImageView
-        if(holder.getArrowImageView().isVisible){
-            holder.getArrowImageView().visibility = View.INVISIBLE
+            // remove previous items arrowImageView
+            if(arrowImageView.isVisible){
+               arrowImageView.visibility = View.INVISIBLE
+            }
         }
     }
+
+    fun getMaxIndex() = maxIndex
+    fun getMinIndex() = minIndex
 
 }

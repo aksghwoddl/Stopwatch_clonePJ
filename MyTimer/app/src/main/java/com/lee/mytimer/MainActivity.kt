@@ -142,12 +142,12 @@ class MainActivity : AppCompatActivity() {
     
     @SuppressLint("NotifyDataSetChanged")
     private fun record() {
-        val recodingTimeData = RecyclerViewModel()
-        recodingTimeData.index = mRecyclerViewAdapter.itemCount
-        recodingTimeData.sectionTime = binding.sectionRecordTextView.text.toString()
-        recodingTimeData.totalTime = binding.timeTextView.text.toString()
-        recodingTimeData.sectionRepeatedTime = mSectionRepeatedTime
-
+        val recodingTimeData = RecyclerViewModel(
+            mRecyclerViewAdapter.itemCount ,
+            binding.sectionRecordTextView.text.toString() ,
+            binding.timeTextView.text.toString() ,
+            mSectionRepeatedTime
+        )
         if(mModelList.isEmpty()){ // Loading animation when show record list at first
             with(binding.recordingLayout){
                 visibility = View.VISIBLE
