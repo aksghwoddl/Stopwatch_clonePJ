@@ -8,11 +8,14 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.lee.mytimer.common.MAX_VALUE
+import com.lee.mytimer.common.MIN_VALUE
 import com.lee.mytimer.databinding.ActivityMainBinding
 import com.lee.mytimer.recyclerview.RecyclerAdapter
 import com.lee.mytimer.recyclerview.RecyclerViewModel
 import java.util.*
 import kotlin.concurrent.timer
+import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -142,20 +145,7 @@ class MainActivity : AppCompatActivity() {
     
     @SuppressLint("NotifyDataSetChanged")
     private fun record() {
-        val recodingTimeData = RecyclerViewModel(
-            mRecyclerViewAdapter.itemCount ,
-            binding.sectionRecordTextView.text.toString() ,
-            binding.timeTextView.text.toString() ,
-            mSectionRepeatedTime
-        )
-        if(mModelList.isEmpty()){ // Loading animation when show record list at first
-            with(binding.recordingLayout){
-                visibility = View.VISIBLE
-                animation = AnimationUtils.loadAnimation(this@MainActivity , R.anim.slide_down_to_up)
-            }
-        }
-
-        mModelList.add(recodingTimeData)
+        addRecordingData()
         mRecyclerViewAdapter.setList(mModelList)
         mRecyclerViewAdapter.notifyDataSetChanged()
         mSectionRepeatedTime = 0
@@ -235,5 +225,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun timerStop() {
         mMainTimeTask?.cancel()
+    }
+
+    /** Function for add Recording Data **/
+    private fun addRecordingData() {
+        val recodingTimeData = RecyclerViewModel(
+            mRecyclerViewAdapter.itemCount ,
+            binding.sectionRecordTextView.text.toString() ,
+            binding.timeTextView.text.toString() ,
+            mSectionRepeatedTime
+        )
+        if(mModelList.isEmpty()){ // Loading animation when show record list at first
+            with(binding.recordingLayout){
+                visibility = View.VISIBLE
+                animation = AnimationUtils.loadAnimation(this@MainActivity , R.anim.slide_down_to_up)
+            }
+        } else { // Check whether sectionRepeatedTime is min or max
+            val minValue = mModelList.minBy { it.sectionTime }
+            val maxValue = mModelList.maxBy { it.sectionTime }
+            if(recodingTimeData.sectionTime < minValue.sectionTime){
+                recodingTimeData.setSectionView = MIN_VALUE
+                minValue.setSectionView = -1
+            } else if(recodingTimeData.sectionTime > maxValue.sectionTime){
+                recodingTimeData.setSectionView = MAX_VALUE
+                maxValue.setSectionView = -1
+            }
+        }
+
+        mModelList.add(recodingTimeData)
     }
 }
