@@ -1,6 +1,6 @@
 # ⏰ 삼성 갤럭시 시계 스톱워치 클론 코딩
 <div align="center">
- <img width="50%" alt="app_main" src="https://user-images.githubusercontent.com/65700842/197681702-3469b0ad-5575-4817-be4a-78f60bef31b8.png">
+ <img width="30%" alt="app_main" src="https://user-images.githubusercontent.com/65700842/197937284-57650aca-96ff-4b34-8f2e-384b70ed9e31.png">
 </div>
 
 <br>
