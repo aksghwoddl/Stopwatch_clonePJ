@@ -35,5 +35,5 @@
 
 ### 🎥 시연 화면
 <div align="center">
- <img width="30%" alt="app_main" src="https://user-images.githubusercontent.com/65700842/197683142-9a655941-8bc9-49cf-93b9-8115e90fb0c6.gif">
+ <img width="30%" alt="app_main" src="https://user-images.githubusercontent.com/65700842/197937448-998a2cb4-a70b-4019-b114-661c0405d63c.gif">
 </div>
