@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         //Recording data clear
         mModelList.clear()
         mRecyclerViewAdapter.clearAll()
-        mRecyclerViewAdapter.notifyDataSetChanged()
+        mRecyclerViewAdapter.notifyItemRangeChanged(0 , mRecyclerViewAdapter.itemCount)
         mMainTimeTask = null
     }
     
