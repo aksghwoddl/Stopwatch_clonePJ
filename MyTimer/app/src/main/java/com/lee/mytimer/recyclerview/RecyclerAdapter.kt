@@ -32,8 +32,6 @@ class RecyclerAdapter(private val context : Context) : RecyclerView.Adapter<Recy
 
     private var modelList = mutableListOf<RecyclerViewModel>()
 
-    private lateinit var minValue : String
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
         Log.d(TAG , "onCreateViewHolder()")
         val binding = RecyclerViewHolderBinding.inflate(LayoutInflater.from(parent.context) , parent , false)
