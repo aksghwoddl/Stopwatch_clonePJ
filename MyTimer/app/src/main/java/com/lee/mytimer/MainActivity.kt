@@ -13,6 +13,7 @@ import com.lee.mytimer.common.MIN_VALUE
 import com.lee.mytimer.databinding.ActivityMainBinding
 import com.lee.mytimer.recyclerview.RecyclerAdapter
 import com.lee.mytimer.recyclerview.RecyclerViewModel
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.concurrent.timer
 import kotlin.math.min
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     
     private lateinit var binding : ActivityMainBinding
     private lateinit var mRecyclerViewAdapter: RecyclerAdapter
-    private var mMainTimeTask : Timer? = null
+    private var mTimerJob : Job? = null
 
     /** For Control Button State **/
     private var mIsRunning = false
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy()")
-        mMainTimeTask = null
+        mTimerJob = null
     }
 
 
@@ -60,6 +61,9 @@ class MainActivity : AppCompatActivity() {
                 if(mIsRunning){
                     // when timer is running
                     start()
+                    mTimerJob = CoroutineScope(Dispatchers.Default).launch {
+                        timerStart()
+                    }
                 } else {
                     // when timer is stopped
                     stop()
@@ -96,10 +100,6 @@ class MainActivity : AppCompatActivity() {
             if(!recordingResetButton.isEnabled) recordingResetButton.isEnabled = true
 
             recordingResetButton.text = getString(R.string.record)
-        }
-
-        mMainTimeTask = timer(period = 10){
-           timerStart()
         }
         mIsReset = false
     }
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         mModelList.clear()
         mRecyclerViewAdapter.clearAll()
         mRecyclerViewAdapter.notifyItemRangeChanged(0 , mRecyclerViewAdapter.itemCount)
-        mMainTimeTask = null
+        mTimerJob = null
     }
     
     @SuppressLint("NotifyDataSetChanged")
@@ -176,55 +176,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun timerStart() {
-        mMainRepeatedTime++
-        mSectionRepeatedTime++
-        // values of time components start
-        val hour = mMainRepeatedTime / 360000
-        var minute = mMainRepeatedTime / 6000
-        var seconds = mMainRepeatedTime / 100
-        val milliseconds =  mMainRepeatedTime % 100
+    private suspend fun timerStart() {
+        while (mIsRunning){
+            delay(10)
+            mMainRepeatedTime++
+            mSectionRepeatedTime++
+            // values of time components start
+            val hour = mMainRepeatedTime / 360000
+            var minute = mMainRepeatedTime / 6000
+            var seconds = mMainRepeatedTime / 100
+            val milliseconds =  mMainRepeatedTime % 100
 
-        val sectionHour = mSectionRepeatedTime / 360000
-        var sectionMinute = mSectionRepeatedTime / 6000
-        var sectionSeconds = mSectionRepeatedTime / 100
-        val sectionMilliseconds =  mSectionRepeatedTime % 100
-        // values of time components end
+            val sectionHour = mSectionRepeatedTime / 360000
+            var sectionMinute = mSectionRepeatedTime / 6000
+            var sectionSeconds = mSectionRepeatedTime / 100
+            val sectionMilliseconds =  mSectionRepeatedTime % 100
+            // values of time components end
 
-        // For change values when when seconds or minutes over 60
-        if(seconds >= 60){
-            seconds = 0
-        }
-        if(minute >= 60){
-            minute = 0
-        }
-        if(sectionSeconds >= 60){
-            sectionSeconds = 0
-        }
-        if(sectionMinute >= 60){
-            sectionMinute = 0
-        }
+            // For change values when when seconds or minutes over 60
+            if(seconds >= 60){
+                seconds = 0
+            }
+            if(minute >= 60){
+                minute = 0
+            }
+            if(sectionSeconds >= 60){
+                sectionSeconds = 0
+            }
+            if(sectionMinute >= 60){
+                sectionMinute = 0
+            }
 
-        val millisecondsText = changeTimeToString(milliseconds , false)
-        val secondsText = changeTimeToString(seconds , true)
-        val minuteText = changeTimeToString(minute , true)
-        val hourText = changeTimeToString(hour , false)
+            val millisecondsText = changeTimeToString(milliseconds , false)
+            val secondsText = changeTimeToString(seconds , true)
+            val minuteText = changeTimeToString(minute , true)
+            val hourText = changeTimeToString(hour , false)
 
-        val sectionMillisecondsText = changeTimeToString(sectionMilliseconds , false)
-        val sectionSecondsText = changeTimeToString(sectionSeconds , true)
-        val sectionMinuteText = changeTimeToString(sectionMinute , true)
-        val sectionHourText = changeTimeToString(sectionHour , false)
+            val sectionMillisecondsText = changeTimeToString(sectionMilliseconds , false)
+            val sectionSecondsText = changeTimeToString(sectionSeconds , true)
+            val sectionMinuteText = changeTimeToString(sectionMinute , true)
+            val sectionHourText = changeTimeToString(sectionHour , false)
 
-        runOnUiThread{
-            binding.run {
-                timeTextView.text = "${hourText}:${minuteText}:${secondsText}.${millisecondsText}"
-                sectionRecordTextView.text = "${sectionHourText}:${sectionMinuteText}:${sectionSecondsText}.${sectionMillisecondsText}"
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.run {
+                    timeTextView.text = "${hourText}:${minuteText}:${secondsText}.${millisecondsText}"
+                    sectionRecordTextView.text = "${sectionHourText}:${sectionMinuteText}:${sectionSecondsText}.${sectionMillisecondsText}"
+                }
             }
         }
     }
 
     private fun timerStop() {
-        mMainTimeTask?.cancel()
+        mTimerJob?.cancel()
     }
 
     /** Function for add Recording Data **/
